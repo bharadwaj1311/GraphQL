@@ -1,12 +1,12 @@
 
 
-var Customer = require('./Customer');
+import Customer from './Customer.js';
 
 const  resolverObject = {
 	Query : {
-		customer: () => 	new Customer()
+		customer: () => 	new Customer().getCustomer()
 	},
 	 
 }
 
-module.exports=resolverObject
+export default resolverObject;

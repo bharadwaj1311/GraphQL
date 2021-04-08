@@ -1,16 +1,18 @@
 
-var Payment = require('./Payment');
+import Payment from './Payment.js';
+
  
 
 
 const  resolverObject = {
    Query : {
-		payment: () => 	Payment.getPaymentDetails() 
+		payment: (data,args,context,info) => new	Payment().getPaymentDetails(context) 
+		 
    },
    Mutation : {
 		createPaymentInstrument:(data,args,context,info) => { 
-			return Payment.createPaymentDetails(args); 
+			return  new	Payment().createPaymentDetails(args); 
 		}
 	}
 }
-module.exports=resolverObject
+export default resolverObject;

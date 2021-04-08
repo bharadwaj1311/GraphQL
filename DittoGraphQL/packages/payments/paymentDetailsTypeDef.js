@@ -1,8 +1,8 @@
 
- 
+ import { gql } from 'apollo-server-express';
 
 const typeDefinition = `
-	extend type Query  {
+	 type Query  {
 		payment: Payment
 	}
 	type Mutation {
@@ -41,7 +41,9 @@ const typeDefinition = `
 	input PaymentCard{
 		payment_card : PaymentCardDetails
 	}
+	
+	 
 	 
 `
 
-module.exports=typeDefinition
+export default typeDefinition;

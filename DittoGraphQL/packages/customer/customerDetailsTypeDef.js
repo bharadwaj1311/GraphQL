@@ -19,4 +19,4 @@ const typeDefinition = `
 
 `
 
-module.exports=typeDefinition
+export default typeDefinition;

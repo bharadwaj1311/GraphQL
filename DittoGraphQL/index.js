@@ -1,34 +1,78 @@
-const bodyParser = require('body-parser')
-const merge = require('lodash')
-const cors = require('cors')
-const express = require('express')
-const port = process.env.PORT||9000
-const app = express()
- 
-app.use(bodyParser.json() , cors())
+import express from 'express';
+import session from 'express-session';
+import uuid from 'uuid/v4';
+import passport from 'passport';
+import { GraphQLLocalStrategy, buildContext } from 'graphql-passport';
+import { ApolloServer } from 'apollo-server-express';
+import User from './packages/User';
+import PaymentDetailsTypeDef from './packages/payments/paymentDetailsTypeDef.js';
+import PaymentDetailsResolvers from './packages/payments/paymentDetailsResolvers.js';
+import CustomerDetailsTypeDef from './packages/customer/customerDetailsTypeDef.js';
+import CustomerDetailsResolvers from './packages/customer/customerDetailsResolvers.js';
+import UserToken from './packages/UserToken.js';
 
+var typeDefs = [PaymentDetailsTypeDef,CustomerDetailsTypeDef];
+var resolvers = [PaymentDetailsResolvers,CustomerDetailsResolvers];
+const PORT = 9000;
+const SESSION_SECRECT = 'bad secret';
+var Config = require('./config');
 
-var customerTypeDefinition = require('./packages/customer/customerDetailsTypeDef'); 
-var customerResolverObject = require('./packages/customer/customerDetailsResolvers');
+passport.use(
+  new GraphQLLocalStrategy((user, pass, done) => {
+		
+		let AuthUser = function() {
+		  return new UserToken().getLoggedInToken().then(response => { return response;})
+		}
+		 			
+		AuthUser().then(response => {
+			done(null, {customer: response.customer,token: response.AuthToken});
+		})
+    }),
+);
 
-var productTypeDefinition = require('./packages/product/productDetailsTypeDef'); 
-var productResolverObject = require('./packages/product/productDetailsResolvers');
+passport.serializeUser((user, done) => {
+	done(null, user);
+});
 
-var paymentTypeDefinition = require('./packages/payments/paymentDetailsTypeDef'); 
-var paymentResolverObject = require('./packages/payments/paymentDetailsResolvers');
+passport.deserializeUser((user, done) => {
+	var token = user.token;
+	var customerID = user.customer.customer_id;
+	var customer = user.customer;
+	done(null, customer);
+});
 
+const app = express();
 
+app.use(session({
+  secret: SESSION_SECRECT,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+            sameSite: 'strict',
+	},
+}));
 
+app.use(passport.initialize());
+app.use(passport.session());
 
+export async function getUserFromContext(context, refresh = false) {
+    let user = context.getUser();
+    const token = user && !refresh ? user.token : '';
+    if (!token) {
+		const res = await context.authenticate('graphql-local', { token });
+        context.login(res.user);
+    }
+    return user;
+}
 
-const {makeExecutableSchema} = require('graphql-tools')
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: ({ req, res }) => buildContext({ req, res, User }) 
+});
 
+server.applyMiddleware({ app,path: '/api' });
 
-const schema = makeExecutableSchema({typeDefs:[customerTypeDefinition,productTypeDefinition,paymentTypeDefinition], 
-									 resolvers:   [customerResolverObject,productResolverObject,paymentResolverObject]})
-
-const {graphqlExpress,graphiqlExpress} = require('apollo-server-express')
-
-app.use('/graphql',graphqlExpress({schema}))
-app.use('/graphiql',graphiqlExpress({endpointURL:'/graphql'}))
-app.listen(port, () =>  console.log(`server is up and running ${port}`))
+app.listen({ port: PORT }, () => {
+  console.log(`🚀 Server ready at http://localhost:${PORT}`);
+});
