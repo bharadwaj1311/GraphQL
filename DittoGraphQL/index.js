@@ -4,15 +4,21 @@ import uuid from 'uuid/v4';
 import passport from 'passport';
 import { GraphQLLocalStrategy, buildContext } from 'graphql-passport';
 import { ApolloServer } from 'apollo-server-express';
-import User from './packages/User';
-import PaymentDetailsTypeDef from './packages/payments/paymentDetailsTypeDef.js';
-import PaymentDetailsResolvers from './packages/payments/paymentDetailsResolvers.js';
-import CustomerDetailsTypeDef from './packages/customer/customerDetailsTypeDef.js';
-import CustomerDetailsResolvers from './packages/customer/customerDetailsResolvers.js';
-import UserToken from './packages/UserToken.js';
+ 
+import paymentDetailsTypeDef from './packages/payments/paymentDetailsTypeDef.js';
+import paymentDetailsResolver from './packages/payments/paymentDetailsResolvers.js';
+import customerDetailsTypeDef from './packages/customer/customerDetailsTypeDef.js';
+import customerDetailsResolver from './packages/customer/customerDetailsResolvers.js';
 
-var typeDefs = [PaymentDetailsTypeDef,CustomerDetailsTypeDef];
-var resolvers = [PaymentDetailsResolvers,CustomerDetailsResolvers];
+import tokenDetailsResolver from './packages/token/TokenDetailsResolvers.js';
+import tokenDetailsTypeDef from './packages/token/TokenDetailsTypeDef.js';
+import {UserToken,User} from './packages/UserToken.js';
+ 
+
+var typeDefs = [paymentDetailsTypeDef,customerDetailsTypeDef,tokenDetailsTypeDef];
+var resolvers = [paymentDetailsResolver,customerDetailsResolver,tokenDetailsResolver];
+
+
 const PORT = 9000;
 const SESSION_SECRECT = 'bad secret';
 var Config = require('./config');
@@ -56,6 +62,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 export async function getUserFromContext(context, refresh = false) {
+	console.log("i wil call always ra ");
     let user = context.getUser();
     const token = user && !refresh ? user.token : '';
     if (!token) {

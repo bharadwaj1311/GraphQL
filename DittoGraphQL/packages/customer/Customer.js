@@ -24,6 +24,10 @@ class Customer{
 		}
 		
 	}
+	
+	getToken(){
+		return {"customer_id":"data"}
+	}
 }
 
   

@@ -5,14 +5,23 @@ const typeDefinition = `
     customer: Customer
  }
 	type Customer {
-        id: String!,
-		customer_id : String,
-        name: String!
-        masterId: String
-        price: Float!
-        currency: String!
-        longDescription: String!
-        shortDescription: String!
+        creation_date: String,
+        enabled: String,
+		email: String ,
+        login : String,
+		customer_no: String
+        first_name: String,
+		last_name: String,
+		gender: String,
+		last_login_time: String,
+		last_modified : String,
+		last_visit_time	 : String,
+		previous_login_time: String,
+		previous_visit_time : String,
+		customer_id : String!,
+		auth_type: String!,
+		token : String!,
+		error: String
     }
 
 
