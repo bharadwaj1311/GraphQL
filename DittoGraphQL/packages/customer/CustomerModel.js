@@ -1,55 +1,57 @@
-const fetch = require("make-fetch-happen");
-var AppConstants = require('../../constants');
-var Config = require('../../config');
-
-
-
+/**
+ * For Preparing Model Data of Customer.
+ * for Logged in Customer
+ * for Guest
+ * for update Customer..
+ */
 class CustomerModel{
 	constructor(){
 	}
 	/**
-	 *  Get Token Association data.....
+	 *  Get Customer Association data.....
 	 */
-	getTokenAssoicatedData(respsonseObjJSON){
-		var tokenResponse= {};
+	getCustomerAssoicatedData(respsonseObjJSON){
+		var customerResponse= {};
 		try{
 			// it means it is error response:
-			if(respsonseObjJSON  && respsonseObjJSON.fault){
-				tokenResponse.customer_id = ""
-				tokenResponse.auth_type = "";
-				tokenResponse.error = respsonseObjJSON.fault.message?respsonseObjJSON.fault.message:"Token Error:Generic Error";
-				return tokenResponse;
+			if(respsonseObjJSON){
+				if(respsonseObjJSON.fault){
+					customerResponse.error = respsonseObjJSON.fault.message?respsonseObjJSON.fault.message:"Token Error:Generic Error";
+					return customerResponse;
+				}
+				if(respsonseObjJSON.error){
+					return customerResponse.error = respsonseObjJSON.error.toString();
+				}
+				if(respsonseObjJSON.error_description){
+					return customerResponse.error = respsonseObjJSON.error_description.toString();
+				}
+				customerResponse.customer_id = respsonseObjJSON.customer_id?respsonseObjJSON.customer_id:"";
+				customerResponse.auth_type = respsonseObjJSON.auth_type?respsonseObjJSON.auth_type:"";
+				//Only Logged in user will have below data...
+				if(respsonseObjJSON.customer_no){
+					customerResponse.creation_date = respsonseObjJSON.creation_date;
+					customerResponse.enabled = respsonseObjJSON.enabled;
+					customerResponse.email = respsonseObjJSON. email;
+					customerResponse.login = respsonseObjJSON.login;
+					customerResponse.customer_no = respsonseObjJSON.customer_no;
+					customerResponse.first_name = respsonseObjJSON.first_name;
+					customerResponse.last_name = respsonseObjJSON.last_name;
+					customerResponse.gender = respsonseObjJSON.gender;
+					customerResponse.last_login_time= respsonseObjJSON.last_login_time;
+					customerResponse.last_modified = respsonseObjJSON.last_modified;
+					customerResponse.last_visit_time	 = respsonseObjJSON.last_visit_time;
+					customerResponse.phone_mobile	 = respsonseObjJSON.phone_mobile;
+					customerResponse.previous_login_time= respsonseObjJSON.previous_login_time;
+					customerResponse.previous_visit_time = respsonseObjJSON.previous_visit_time;
+				}
+				customerResponse.success=true;
 			}
-		 	tokenResponse.customer_id = respsonseObjJSON.customer_id?respsonseObjJSON.customer_id:"";
-			tokenResponse.auth_type = respsonseObjJSON.auth_type?respsonseObjJSON.auth_type:"";
-			 
-			tokenResponse.creation_date = respsonseObjJSON.creation_date;
-			tokenResponse.enabled = respsonseObjJSON.enabled;
-			tokenResponse.email = respsonseObjJSON. email;
-			tokenResponse.login = respsonseObjJSON.login;
-			tokenResponse.customer_no = respsonseObjJSON.customer_no;
-			tokenResponse.first_name = respsonseObjJSON.first_name;
-			tokenResponse.last_name = respsonseObjJSON.last_name;
-			tokenResponse.gender = respsonseObjJSON.gender;
-			tokenResponse.last_login_time= respsonseObjJSON.last_login_time;
-			tokenResponse.last_modified = respsonseObjJSON.last_modified;
-			tokenResponse.last_visit_time	 = respsonseObjJSON.last_visit_time;
-			tokenResponse.phone_mobile	 = respsonseObjJSON.phone_mobile;
-			tokenResponse.previous_login_time= respsonseObjJSON.previous_login_time;
-			tokenResponse.previous_visit_time = respsonseObjJSON.previous_visit_time;
-		 
-			
-			tokenResponse.customer_id = respsonseObjJSON.customer_id;
- 			tokenResponse.success=true;
 		}catch(error){
-			console.error("TokenModel.getTokenAssoicatedData():"+error);
-			//as these two fields are mandatory.
-			tokenResponse.customer_id = "";
-			tokenResponse.auth_type="";
-			tokenResponse.success=false;
-			tokenResponse.error = error.toString();
+			console.error("CustomerModel.getCustomerAssoicatedData():"+error);
+			customerResponse.success=false;
+			customerResponse.error = error.toString();
 		}
-		return tokenResponse;
+		return customerResponse;
 	}		
 }
 
