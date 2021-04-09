@@ -28,12 +28,12 @@ class Token{
 				tokenResponseData.token = "";
 			}
 		}catch (error) {
-			console.log(error);
+			console.log("Token.getGuestToken:"+error);
 			//as these two fields are mandatory.
 			tokenResponseData.customer_id = "";
 			tokenResponseData.auth_type="";
 			tokenResponseData.success=false;
-			tokenResponseData.error = error.toString();
+			tokenResponseData.error = "Token.getGuestToken:"+error.toString();
 		}
 		return tokenResponseData;
 	}
@@ -61,12 +61,12 @@ class Token{
 				tokenResponseData.token = "";
 			}	
 		}catch (error) {
-			console.log(error);
+			console.log("Token.getLoggedInToken:"+error);
 			//as these two fields are mandatory.
 			tokenResponseData.customer_id = "";
 			tokenResponseData.auth_type="";
 			tokenResponseData.success=false;
-			tokenResponseData.error=error.toString();
+			tokenResponseData.error="Token.getLoggedInToken:"+error.toString();
 		}
 		return tokenResponseData;
 	}
@@ -85,7 +85,7 @@ class Token{
 			} 
 			const refreshTokenResp = await fetch(url,{method:'post',headers:authHeaders,body:JSON.stringify(bodyData)});
 			var refreshTokenJSON = await refreshTokenResp.json();
-			console.log("refreshTokenJSON" + JSON.stringify(refreshTokenJSON));
+			 
 			tokenResponseData = tokenModel.getTokenAssoicatedData(refreshTokenJSON);
 			if(tokenResponseData.success){
 				tokenResponseData.token = refreshTokenResp.headers.get('Authorization');
@@ -93,12 +93,12 @@ class Token{
 				tokenResponseData.token = "";
 			}
 		}catch (error) {
-			console.log(error);
+			console.log("Token.refreshToken():"+error);
 			//as these two fields are mandatory.
 			tokenResponseData.customer_id = "";
 			tokenResponseData.auth_type="";
 			tokenResponseData.success=false;
-			tokenResponseData.error = error.toString();
+			tokenResponseData.error = "Token.refreshToken():"+error.toString();
 		}
 		return tokenResponseData;
 	}
@@ -119,10 +119,53 @@ class Token{
 			
 			return "Invalidated";
 		}catch (error) {
-			console.log(error);
+			console.log("Token.invalidateToken:"+error);
 			return "Failed to Invalidated "+error.toString();
 		}
 		return tokenResponseData;
+	}
+	/**
+	 * oAuth Token...
+	 */
+	async oAuthToken(args){
+		var tokenModel = new TokenModel();
+		var tokenResponseData = {}; 
+		try {
+			const url = Config.SFCC_OAuth_URL+"?grant_type=client_credentials";
+			var authHeaders = {
+				"Content-Type":"application/x-www-form-urlencoded",
+				"Authorization":"Basic "+args.encodeStr
+			} 
+			const authToken = await fetch(url,{method:'post',headers:authHeaders});
+			var tokenJSON = await authToken.json();
+			tokenResponseData = tokenModel.getTokenAssoicatedData(tokenJSON); 
+		}catch (error) {
+			console.log("Token.oAuthToken:"+error);
+			tokenResponseData = {error_description:error.toString()}
+			tokenResponseData; 
+		}
+		return tokenResponseData;
+	}
+	/**
+	 * Environment oAuth Token....
+	 */
+	async envAuthToken(args){
+		var tokenModel = new TokenModel();
+		 
+		try {
+			const url = Config.SFCC_ENV_OAUTH_URL+"?"+Config.SFCC_CLIENT_ID+"&grant_type=urn:demandware:params:oauth:grant-type:client-id:dwsid:dwsecuretoken";
+			var authHeaders = {
+				"Content-Type":"application/x-www-form-urlencoded",
+				"Authorization":"Basic "+args.encodeStr
+			} 
+			const authToken = await fetch(url,{method:'post',headers:authHeaders});
+			var tokenJSON = await authToken.json();
+			return tokenJSON;
+		}catch (error) {
+			console.log("Token.envAuthToken:"+error);
+			var errorJSON = {error_description:error.toString()}
+			return errorJSON; 
+		}
 	}
 }
 

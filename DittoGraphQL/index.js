@@ -62,12 +62,15 @@ app.use(passport.session());
 export async function getUserFromContext(context,args, refresh = false) {
 	let user = context.getUser();
     const token = user && !refresh ? user.token : '';
-    if (!token) {
+    if (!token) { 
 		var email = args.email;
 		var password = args.password; 
+		console.log("context creating ");
 		const res = await context.authenticate('graphql-local', { email, password });
         context.login(res.user);
-    } 	
+    }else{
+		console.log("context exist ");
+	}		
 	return user;
 }
 

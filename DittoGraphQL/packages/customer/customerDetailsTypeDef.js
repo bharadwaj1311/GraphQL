@@ -6,7 +6,8 @@ const typeDefinition = `
 	
  },
  extend type Mutation{
-	loginUser(email:String!,password:String!):Customer
+	loginUser(email:String!,password:String!):Customer,
+	logout: Boolean
  }
 	type Customer {
         creation_date: String,

@@ -8,7 +8,8 @@ const  resolverObject = {
 		
 	},
 	Mutation:{
-		loginUser: (data,args,context,info) =>  new Customer().registerLogin(context,args)
+		loginUser: (data,args,context,info) =>  new Customer().registerLogin(context,args),
+		 logout: (data, args, context) => context.logout()
 	}
 	 
 }
