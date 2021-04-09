@@ -11,6 +11,13 @@ class TokenModel{
 	getTokenAssoicatedData(respsonseObjJSON){
 		var tokenResponse= {};
 		try{
+			// it means it is error response:
+			if(respsonseObjJSON  && respsonseObjJSON.fault){
+				tokenResponse.customer_id = ""
+				tokenResponse.auth_type = "";
+				tokenResponse.error = respsonseObjJSON.fault.message?respsonseObjJSON.fault.message:"Token Error:Generic Error";
+				return tokenResponse;
+			}
 		 	tokenResponse.customer_id = respsonseObjJSON.customer_id?respsonseObjJSON.customer_id:"";
 			tokenResponse.auth_type = respsonseObjJSON.auth_type?respsonseObjJSON.auth_type:"";
 			 

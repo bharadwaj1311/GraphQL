@@ -3,6 +3,10 @@
 const typeDefinition = `
  extend type Query  {
     customer: Customer
+	
+ },
+ extend type Mutation{
+	loginUser(email:String!,password:String!):Customer
  }
 	type Customer {
         creation_date: String,

@@ -12,7 +12,8 @@ import customerDetailsResolver from './packages/customer/customerDetailsResolver
 
 import tokenDetailsResolver from './packages/token/TokenDetailsResolvers.js';
 import tokenDetailsTypeDef from './packages/token/TokenDetailsTypeDef.js';
-import {UserToken,User} from './packages/UserToken.js';
+import Token from './packages/token/Token.js';
+import  User  from './packages/token/Token.js';
  
 
 var typeDefs = [paymentDetailsTypeDef,customerDetailsTypeDef,tokenDetailsTypeDef];
@@ -23,15 +24,15 @@ const PORT = 9000;
 const SESSION_SECRECT = 'bad secret';
 var Config = require('./config');
 
-passport.use(
-  new GraphQLLocalStrategy((user, pass, done) => {
-		
+passport.use(new GraphQLLocalStrategy((userID,password, done) => {
 		let AuthUser = function() {
-		  return new UserToken().getLoggedInToken().then(response => { return response;})
+			var encodeString =   Buffer.from(userID+":"+password).toString('base64');
+			var args = {"encodeStr" : encodeString};	
+			return new Token().getLoggedInToken(args).then(userData => { return userData;})
 		}
 		 			
-		AuthUser().then(response => {
-			done(null, {customer: response.customer,token: response.AuthToken});
+		AuthUser().then(userData => {
+			done(null, userData);
 		})
     }),
 );
@@ -41,10 +42,7 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((user, done) => {
-	var token = user.token;
-	var customerID = user.customer.customer_id;
-	var customer = user.customer;
-	done(null, customer);
+	done(null, user);
 });
 
 const app = express();
@@ -54,22 +52,23 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-            sameSite: 'strict',
+	sameSite: 'strict',
 	},
 }));
 
 app.use(passport.initialize());
 app.use(passport.session());
 
-export async function getUserFromContext(context, refresh = false) {
-	console.log("i wil call always ra ");
-    let user = context.getUser();
+export async function getUserFromContext(context,args, refresh = false) {
+	let user = context.getUser();
     const token = user && !refresh ? user.token : '';
     if (!token) {
-		const res = await context.authenticate('graphql-local', { token });
+		var email = args.email;
+		var password = args.password; 
+		const res = await context.authenticate('graphql-local', { email, password });
         context.login(res.user);
-    }
-    return user;
+    } 	
+	return user;
 }
 
 const server = new ApolloServer({

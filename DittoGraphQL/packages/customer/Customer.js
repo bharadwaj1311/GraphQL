@@ -1,7 +1,10 @@
 const fetch = require("make-fetch-happen");
 var AppConstants = require('../../constants');
 var Config = require('../../config');
-
+import TokenModel from '../token/TokenModel.js';
+import {
+    getUserFromContext
+} from '../../index.js';
 
 
 class Customer{
@@ -20,14 +23,29 @@ class Customer{
 			const customerData = await fetch(url,{method:'get',headers:authHeaders});
 			return await customerData.json();;
 		}catch (error) {
-			console.log(error);
+			console.log("Customer.getCustomer()"+error);
 		}
+	}
+	/**
+	 * Registered Login
+	*/
+	registerLogin(context,args){
+		try{
+			let token = function() {
+			  return getUserFromContext(context,args).then(response => { return context})
+			}
+			var tokenModel = new TokenModel();
+			var tokenResponseData = {};
+			 
+			return token().then(async context => { 
+				return tokenResponseData = tokenModel.getTokenAssoicatedData(context.getUser());
+			});	
+		}catch(error){
+			console.log("Customer.registerLogin():"+error);
+		}			
 		
-	}
-	
-	getToken(){
-		return {"customer_id":"data"}
-	}
+	}	
+	 
 }
 
   
