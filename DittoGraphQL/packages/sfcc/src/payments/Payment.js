@@ -1,5 +1,5 @@
 const fetch = require("make-fetch-happen");
-var AppConstants = require('../../constants');
+ 
 const config = require('../../config/SFCCAPIPath.js'); 
 const SFCCAPIPath = require('../../config/SFCCAPIPath');
 

@@ -14,7 +14,12 @@ import tokenDetailsResolver from './packages/sfcc/src/token/TokenDetailsResolver
 import tokenDetailsTypeDef from './packages/sfcc/src/token/TokenDetailsTypeDef.js';
 import Token from './packages/sfcc/src/token/Token.js';
 import  User  from './packages/sfcc/src/token/Token.js';
+
  
+var propertiesReader = require('properties-reader');
+var SFCCErrors = propertiesReader('./packages/sfcc/ErrorCodes.properties');
+ 
+  
 
 var typeDefs = [paymentDetailsTypeDef,customerDetailsTypeDef,tokenDetailsTypeDef];
 var resolvers = [paymentDetailsResolver,customerDetailsResolver,tokenDetailsResolver];
@@ -46,6 +51,8 @@ passport.deserializeUser((user, done) => {
 	done(null, user);
 });
 
+
+
 const app = express();
  app.use(session({
   secret: SESSION_SECRECT,
@@ -58,6 +65,8 @@ const app = express();
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+ 
 
 export async function getUserFromContext(context,args, refresh = false) {
 	let user = context.getUser();
@@ -72,7 +81,14 @@ export async function getUserFromContext(context,args, refresh = false) {
 	}		
 	return user;
 }
-
+ 
+export function getSFCCErrorMSG(propKey){
+	try{
+		return SFCCErrors.get(propKey);
+	}catch(error){
+		console.log("indexjs:.getPropertyValue() method error "+error.toString())
+	}		
+}
 const server = new ApolloServer({
   typeDefs,
   resolvers,

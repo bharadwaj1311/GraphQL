@@ -1,19 +1,16 @@
 #################################------User----- ##################
 ## Create User ##
- mutation {
-  createUser(input : {
-    	payment_card:{
-      	card_type : "Master",
-				expiration_month : 1,
-				expiration_year : 2023,
-				holder : "Gopal",
-				number : "5555444433331111"  
-      }
-		}
-  ) {
-    payment_card{
-      masked_number
-    }
-    payment_instrument_id
+mutation{
+  createCustomer(input:{
+    password : "Bharat@123",
+    customer :
+   {
+                login: "Gayatri7",
+                email:"gayatri@test27.com",
+                last_name:"challa"
+               }
+  }){
+    customer_no 
   }
+  
 }

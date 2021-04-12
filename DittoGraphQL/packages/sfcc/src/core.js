@@ -10,20 +10,14 @@ export class Core {
 	constructor() {
 		this.INSTANCE = 'Core Instance: ' + new Date();
 		
+		this.prop =  
 		console.log("in Core Constructor "+this.INSTANCE);
 		 
 	}
 	
-	
-	getErrorMSG(errorKey){
-		
-		return prop.get(errorKey);
-	}
-	
 	init(){
-		this.prop = PropertiesReader('../ErrorCodes.properties');
+		console.log("in init method ");
 	}
-
 }
 
 const coreSingleton = new Core();

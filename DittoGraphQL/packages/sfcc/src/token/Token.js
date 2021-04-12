@@ -1,9 +1,12 @@
 const fetch = require("make-fetch-happen");
-var AppConstants = require('../../constants');
 var SFCCAPIPath = require('../../config/SFCCAPIPath');
+
 import TokenModel from './TokenModel.js';
 const config = require('../../config/Config.js'); 
 
+import {
+    getSFCCErrorMSG
+} from '../../../../index.js';
 
 class Token{
 	constructor(){
@@ -35,7 +38,7 @@ class Token{
 			tokenResponseData.success=false;
 			tokenResponseData.error = {};
 			tokenResponseData.error.errorDescription = "Token.getGuestToken: Error is "+error.toString();
-			tokenResponseData.error.errorMSG =  "Token.getGuestToken: Error is "+error.toString();
+			tokenResponseData.error.errorMSG =  getSFCCErrorMSG("Token.101");
 			tokenResponseData.error.errorCode = "Token.101";
 		}
 		return tokenResponseData;
