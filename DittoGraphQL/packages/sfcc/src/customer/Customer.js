@@ -65,6 +65,8 @@ class Customer{
 	 * Create Profile 
 	*/
 	async createProfile(authToken,context,args){
+		var createdUserData = {};
+		createdUserData.error={};
 		try{
 			var customerModel = new CustomerModel();
 			if(authToken && authToken.token){
@@ -74,23 +76,27 @@ class Customer{
 				}
 				var bodyData =  JSON.stringify(args.input);
 				const url = config.SFCC_ENV_URL+SFCCAPIPath.SFCC_CUSTOMER_API_PATh;
+				 
 				const customerData = await fetch(url,{method:'post',headers:authHeaders,body:bodyData});
 				if(customerData){
 					var customerDataJSON =  await customerData.json();
-					var createdUserData = customerModel.getCustomerAssoicatedData(customerDataJSON);
+					createdUserData = customerModel.getCustomerAssoicatedData(customerDataJSON);
+				 
 					if(createdUserData && createdUserData.success){
 						args.email = args.input.customer.login;
 						args.password = args.input.password;
 						createdUserData = this.registerLogin(context,args);
+						
 					} 
 				}else{
-					createdUserData.error="Created User Failed at Service Call";
+					createdUserData.error.errorMSG="Created User Failed at Service Call";
 				}
 			}else{
-				createdUserData.error="For Creating user Needed Auth Token , could not create it";
+				createdUserData.error.errorMSG="For Creating user Needed Auth Token , could not create it";
 			}
 		}catch(error){
 			console.log("Customer.createProfile():"+error);
+			createdUserData.error.errorMSG = error.toString();
 		}
 		return createdUserData;
 	}

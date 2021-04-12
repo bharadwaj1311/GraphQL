@@ -17,7 +17,7 @@ class Token{
 		var tokenResponseData = {};
 		try {
 			const url = config.SFCC_ENV_URL+SFCCAPIPath.SFCC_CUSTOMER_AUTH+"?"+SFCCAPIPath.SFCC_CLIENT_ID;
-			console.log("url is "+url);
+			 
 			var bodyData = { "type": "guest"};
 			var authHeaders = {
 				"Content-Type":"application/json"
@@ -48,7 +48,7 @@ class Token{
 		var tokenResponseData = {};
 		try {
 			 
-			const url = Config.SFCC_ENV_URL+SFCCAPIPath.SFCC_CUSTOMER_AUTH+"?"+SFCCAPIPath.SFCC_CLIENT_ID;
+			const url = config.SFCC_ENV_URL+SFCCAPIPath.SFCC_CUSTOMER_AUTH+"?"+SFCCAPIPath.SFCC_CLIENT_ID;
 			var bodyData = { "type": "credentials"};
 			var authHeaders = {
 				"Content-Type":"application/json",
@@ -67,6 +67,7 @@ class Token{
 		}catch (error) {
 			console.log("Token.getLoggedInToken:"+error);
 			tokenResponseData.success=false;
+			tokenResponseData.error = {};
 			tokenResponseData.error.errorMSG = "Token.getLoggedInToken:"+error.toString();
 			tokenResponseData.error.errorCode = "Token:LoggedInToken:102:";
 		}

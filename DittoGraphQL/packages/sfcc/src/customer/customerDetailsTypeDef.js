@@ -42,7 +42,8 @@ const typeDefinition = `
     }
 	type CustomerError{
 		errorMSG: String,
-		errorCode : String
+		errorCode : String,
+		errorDescription : String
 	}
 `
 

@@ -16,14 +16,19 @@ class CustomerModel{
 			// it means it is error response:
 			if(respsonseObjJSON){
 				if(respsonseObjJSON.fault){
-					customerResponse.error = respsonseObjJSON.fault.message?respsonseObjJSON.fault.message:"Token Error:Generic Error";
+					customerResponse.error={};
+					customerResponse.error.errorMSG = respsonseObjJSON.fault.message?respsonseObjJSON.fault.message:"Token Error:Generic Error";
 					return customerResponse;
 				}
 				if(respsonseObjJSON.error){
-					return customerResponse.error = respsonseObjJSON.error.toString();
+					customerResponse.error={};
+					customerResponse.error.errorMSG = respsonseObjJSON.error.toString();
+					return customerResponse;
 				}
 				if(respsonseObjJSON.error_description){
-					return customerResponse.error = respsonseObjJSON.error_description.toString();
+					customerResponse.error={};
+					customerResponse.error.errorMSG = respsonseObjJSON.error_description.toString();
+					return customerResponse; 
 				}
 				customerResponse.customer_id = respsonseObjJSON.customer_id?respsonseObjJSON.customer_id:"";
 				customerResponse.auth_type = respsonseObjJSON.auth_type?respsonseObjJSON.auth_type:"";
@@ -46,12 +51,14 @@ class CustomerModel{
 					customerResponse.success=true;
 				}
 			}else{
-				customerResponse.error ="Generic Error Create/fetch User Service Failed ";
+				customerResponse.error={};
+				customerResponse.error.errorMSG ="Generic Error Create/fetch User Service Failed ";
 			}
 		}catch(error){
+			customerResponse.error={};
+			customerResponse.error.errorMSG = error.toString();
 			console.error("CustomerModel.getCustomerAssoicatedData():"+error);
 			customerResponse.success=false;
-			customerResponse.error = error.toString();
 		}
 		return customerResponse;
 	}		
