@@ -1,0 +1,57 @@
+#################################------Tokens----- ##################
+## Get Guest Token ##
+{
+	guestUser{
+		customer_id,
+		token,
+		auth_type,
+		error{
+			errorMSG,
+			errorCode,
+			errorDescription
+		}
+	}
+}
+####  Registered User Token #########
+create   a profile first in site then try below one.
+{
+  registeredUser(encodeStr:"<<Encode Base 64 userid:password >>"){
+    customer_id,
+    token,
+    auth_type,
+	error
+  }
+}
+##### Refresh Token ###
+##Current Token  to refresh token
+{
+  refreshToken(currentToken:"<<current Token>>"){
+    customer_id,
+    token,
+    auth_type
+    error
+  }
+}
+
+####invalidated token#####
+{
+  invalidateToken(currentToken:"<<currentToken>>") 
+} 
+
+
+
+####oAuth Queries###########3
+
+{
+  oAuthToken(encodeStr:"<<encoded APIkey:password>>") {
+    access_token
+  }
+}
+
+####environment specific queries#########3
+{
+  envAuthToken(encodeStr:"<<encode BM login ID : BM password : API Key password>>") {
+    access_token,
+    error_description
+  }
+}

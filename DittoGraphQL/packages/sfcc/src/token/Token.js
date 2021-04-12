@@ -1,8 +1,8 @@
 const fetch = require("make-fetch-happen");
 var AppConstants = require('../../constants');
-var Config = require('../../config');
+var SFCCAPIPath = require('../../config/SFCCAPIPath');
 import TokenModel from './TokenModel.js';
- 
+const config = require('../../config/Config.js'); 
 
 
 class Token{
@@ -16,7 +16,8 @@ class Token{
 		var tokenModel = new TokenModel();
 		var tokenResponseData = {};
 		try {
-			const url = Config.SFCC_ENV_URL+Config.SFCC_CUSTOMER_AUTH+"?"+Config.SFCC_CLIENT_ID;
+			const url = config.SFCC_ENV_URL+SFCCAPIPath.SFCC_CUSTOMER_AUTH+"?"+SFCCAPIPath.SFCC_CLIENT_ID;
+			console.log("url is "+url);
 			var bodyData = { "type": "guest"};
 			var authHeaders = {
 				"Content-Type":"application/json"
@@ -32,8 +33,9 @@ class Token{
 		}catch (error) {
 			console.log("Token.getGuestToken:"+error);
 			tokenResponseData.success=false;
+			tokenResponseData.error = {};
 			tokenResponseData.error.errorDescription = "Token.getGuestToken: Error is "+error.toString();
-			tokenResponseData.error.errorMSG = CoreModule.getErrorMSG("Token.101");
+			tokenResponseData.error.errorMSG =  "Token.getGuestToken: Error is "+error.toString();
 			tokenResponseData.error.errorCode = "Token.101";
 		}
 		return tokenResponseData;
@@ -46,7 +48,7 @@ class Token{
 		var tokenResponseData = {};
 		try {
 			 
-			const url = Config.SFCC_ENV_URL+Config.SFCC_CUSTOMER_AUTH+"?"+Config.SFCC_CLIENT_ID;
+			const url = Config.SFCC_ENV_URL+SFCCAPIPath.SFCC_CUSTOMER_AUTH+"?"+SFCCAPIPath.SFCC_CLIENT_ID;
 			var bodyData = { "type": "credentials"};
 			var authHeaders = {
 				"Content-Type":"application/json",
@@ -77,7 +79,7 @@ class Token{
 		var tokenModel = new TokenModel();
 		var tokenResponseData = {};
 		try {
-			const url = Config.SFCC_ENV_URL+Config.SFCC_CUSTOMER_AUTH+"?"+Config.SFCC_CLIENT_ID;
+			const url = Config.SFCC_ENV_URL+SFCCAPIPath.SFCC_CUSTOMER_AUTH+"?"+SFCCAPIPath.SFCC_CLIENT_ID;
 			var bodyData = { "type": "refresh"};
 			var authHeaders = {
 				"Content-Type":"application/json",
@@ -106,7 +108,7 @@ class Token{
 		var tokenModel = new TokenModel();
 		 
 		try {
-			const url = Config.SFCC_ENV_URL+Config.SFCC_CUSTOMER_AUTH+"?"+Config.SFCC_CLIENT_ID;
+			const url = Config.SFCC_ENV_URL+SFCCAPIPath.SFCC_CUSTOMER_AUTH+"?"+SFCCAPIPath.SFCC_CLIENT_ID;
 			var bodyData = { "type": "refresh"};
 			var authHeaders = {
 				"Content-Type":"application/json",
@@ -128,7 +130,7 @@ class Token{
 		var tokenModel = new TokenModel();
 		var tokenResponseData = {}; 
 		try {
-			const url = Config.SFCC_OAuth_URL+"?grant_type=client_credentials";
+			const url = SFCCAPIPath.SFCC_OAuth_URL+"?grant_type=client_credentials";
 			var authHeaders = {
 				"Content-Type":"application/x-www-form-urlencoded",
 				"Authorization":"Basic "+args.encodeStr
@@ -150,7 +152,7 @@ class Token{
 		var tokenModel = new TokenModel();
 		 
 		try {
-			const url = Config.SFCC_ENV_OAUTH_URL+"?"+Config.SFCC_CLIENT_ID+"&grant_type=urn:demandware:params:oauth:grant-type:client-id:dwsid:dwsecuretoken";
+			const url = Config.SFCC_ENV_OAUTH_URL+"?"+SFCCAPIPath.SFCC_CLIENT_ID+"&grant_type=urn:demandware:params:oauth:grant-type:client-id:dwsid:dwsecuretoken";
 			var authHeaders = {
 				"Content-Type":"application/x-www-form-urlencoded",
 				"Authorization":"Basic "+args.encodeStr

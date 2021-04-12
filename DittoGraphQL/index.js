@@ -5,29 +5,30 @@ import passport from 'passport';
 import { GraphQLLocalStrategy, buildContext } from 'graphql-passport';
 import { ApolloServer } from 'apollo-server-express';
  
-import paymentDetailsTypeDef from './packages/payments/paymentDetailsTypeDef.js';
-import paymentDetailsResolver from './packages/payments/paymentDetailsResolvers.js';
-import customerDetailsTypeDef from './packages/customer/customerDetailsTypeDef.js';
-import customerDetailsResolver from './packages/customer/customerDetailsResolvers.js';
+import paymentDetailsTypeDef from './packages/sfcc/src/payments/paymentDetailsTypeDef.js';
+import paymentDetailsResolver from './packages/sfcc/src/payments/paymentDetailsResolvers.js';
+import customerDetailsTypeDef from './packages/sfcc/src/customer/customerDetailsTypeDef.js';
+import customerDetailsResolver from './packages/sfcc/src/customer/customerDetailsResolvers.js';
 
-import tokenDetailsResolver from './packages/token/TokenDetailsResolvers.js';
-import tokenDetailsTypeDef from './packages/token/TokenDetailsTypeDef.js';
-import Token from './packages/token/Token.js';
-import  User  from './packages/token/Token.js';
+import tokenDetailsResolver from './packages/sfcc/src/token/TokenDetailsResolvers.js';
+import tokenDetailsTypeDef from './packages/sfcc/src/token/TokenDetailsTypeDef.js';
+import Token from './packages/sfcc/src/token/Token.js';
+import  User  from './packages/sfcc/src/token/Token.js';
  
 
 var typeDefs = [paymentDetailsTypeDef,customerDetailsTypeDef,tokenDetailsTypeDef];
 var resolvers = [paymentDetailsResolver,customerDetailsResolver,tokenDetailsResolver];
+const config = require('./packages/sfcc/config/Config.js'); 
 
-
-const PORT = 9000;
+const PORT = config.PORT;
 const SESSION_SECRECT = 'bad secret';
-var Config = require('./config');
+
 
 passport.use(new GraphQLLocalStrategy((userID,password, done) => {
 		let AuthUser = function() {
 			var encodeString =   Buffer.from(userID+":"+password).toString('base64');
 			var args = {"encodeStr" : encodeString};	
+			
 			return new Token().getLoggedInToken(args).then(userData => { return userData;})
 		}
 		 			
@@ -46,8 +47,7 @@ passport.deserializeUser((user, done) => {
 });
 
 const app = express();
-
-app.use(session({
+ app.use(session({
   secret: SESSION_SECRECT,
   resave: false,
   saveUninitialized: false,
@@ -65,7 +65,6 @@ export async function getUserFromContext(context,args, refresh = false) {
     if (!token) { 
 		var email = args.email;
 		var password = args.password; 
-		console.log("context creating ");
 		const res = await context.authenticate('graphql-local', { email, password });
         context.login(res.user);
     }else{
