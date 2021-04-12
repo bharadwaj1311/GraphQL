@@ -43,8 +43,10 @@ class CustomerModel{
 					customerResponse.phone_mobile	 = respsonseObjJSON.phone_mobile;
 					customerResponse.previous_login_time= respsonseObjJSON.previous_login_time;
 					customerResponse.previous_visit_time = respsonseObjJSON.previous_visit_time;
+					customerResponse.success=true;
 				}
-				customerResponse.success=true;
+			}else{
+				customerResponse.error ="Generic Error Create/fetch User Service Failed ";
 			}
 		}catch(error){
 			console.error("CustomerModel.getCustomerAssoicatedData():"+error);

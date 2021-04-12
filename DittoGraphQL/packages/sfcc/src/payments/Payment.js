@@ -4,24 +4,23 @@ var Config = require('../../config');
 
 import {
     getUserFromContext
-} from '../../index.js';
+} from '../../../../index.js';
 
 class Payment{
 	constructor(){
 	}
-	async getPaymentDetails(context){
+	async getPaymentDetails(context,args){
 		 
 		try {
 			let token = function() {
-			  return getUserFromContext(context).then(response => { return context})
+			  return getUserFromContext(context,args).then(response => { return context})
 			}
 			var finalPayments = token().then(async context => {
-				console.log("Fetch payment Started");
 				var authHeaders = {
 					"Content-Type":"application/json",
 					"Authorization": context.getUser().token
 				}
-				const url = Config.SFCC_ENV_URL+Config.SFCC_CUSTOMER_FETCH_API_PATh+context.getUser().customer.customer_id+Config.SFCC_PAYMENT_API;
+				const url = Config.SFCC_ENV_URL+Config.SFCC_CUSTOMER_FETCH_API_PATh+context.getUser().customer_id+Config.SFCC_PAYMENT_API;
 				
 				const paymentData = await fetch(url,{method:'get',headers:authHeaders});
 				var paym = await paymentData.json();

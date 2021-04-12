@@ -2,6 +2,7 @@ const fetch = require("make-fetch-happen");
 var AppConstants = require('../../constants');
 var Config = require('../../config');
 import TokenModel from './TokenModel.js';
+ 
 
 
 class Token{
@@ -11,6 +12,7 @@ class Token{
 	 * To get Guest Token...
 	*/
 	async getGuestToken(){
+		 
 		var tokenModel = new TokenModel();
 		var tokenResponseData = {};
 		try {
@@ -29,11 +31,10 @@ class Token{
 			}
 		}catch (error) {
 			console.log("Token.getGuestToken:"+error);
-			//as these two fields are mandatory.
-			tokenResponseData.customer_id = "";
-			tokenResponseData.auth_type="";
 			tokenResponseData.success=false;
-			tokenResponseData.error = "Token.getGuestToken:"+error.toString();
+			tokenResponseData.error.errorDescription = "Token.getGuestToken: Error is "+error.toString();
+			tokenResponseData.error.errorMSG = CoreModule.getErrorMSG("Token.101");
+			tokenResponseData.error.errorCode = "Token.101";
 		}
 		return tokenResponseData;
 	}
@@ -54,6 +55,7 @@ class Token{
 			 
 			const customerTokenResp = await fetch(url,{method:'post',headers:authHeaders,body:JSON.stringify(bodyData)});
 			var customerDetails = await customerTokenResp.json();
+			console.log("in token resp "+JSON.stringify(authHeaders));
 			tokenResponseData = tokenModel.getTokenAssoicatedData(customerDetails);
 			if(tokenResponseData.success){
 				tokenResponseData.token = customerTokenResp.headers.get('Authorization');
@@ -62,11 +64,9 @@ class Token{
 			}	
 		}catch (error) {
 			console.log("Token.getLoggedInToken:"+error);
-			//as these two fields are mandatory.
-			tokenResponseData.customer_id = "";
-			tokenResponseData.auth_type="";
 			tokenResponseData.success=false;
-			tokenResponseData.error="Token.getLoggedInToken:"+error.toString();
+			tokenResponseData.error.errorMSG = "Token.getLoggedInToken:"+error.toString();
+			tokenResponseData.error.errorCode = "Token:LoggedInToken:102:";
 		}
 		return tokenResponseData;
 	}
@@ -94,9 +94,6 @@ class Token{
 			}
 		}catch (error) {
 			console.log("Token.refreshToken():"+error);
-			//as these two fields are mandatory.
-			tokenResponseData.customer_id = "";
-			tokenResponseData.auth_type="";
 			tokenResponseData.success=false;
 			tokenResponseData.error = "Token.refreshToken():"+error.toString();
 		}

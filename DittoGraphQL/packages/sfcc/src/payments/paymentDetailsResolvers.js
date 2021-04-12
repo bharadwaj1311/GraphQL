@@ -6,7 +6,7 @@ import Payment from './Payment.js';
 
 const  resolverObject = {
    Query : {
-		payment: (data,args,context,info) => new	Payment().getPaymentDetails(context) 
+		payment: (data,args,context,info) => new	Payment().getPaymentDetails(context,args) 
 		 
    },
    Mutation : {

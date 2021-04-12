@@ -2,9 +2,12 @@ const fetch = require("make-fetch-happen");
 var AppConstants = require('../../constants');
 var Config = require('../../config');
 import CustomerModel from './CustomerModel.js';
+import Token from '../token/Token.js';
+
+
 import {
     getUserFromContext
-} from '../../index.js';
+} from '../../../../index.js';
 
 
 class Customer{
@@ -35,15 +38,63 @@ class Customer{
 			}
 			
 			return userContext().then(async context => { 
-				return customerResponseData = customerModel.getCustomerAssoicatedData(context.getUser());
+				var customerResponseData = customerModel.getCustomerAssoicatedData(context.getUser());
+				console.log("in context return "+JSON.stringify(customerResponseData));
+				return customerResponseData;
 			});	
 		}catch(error){
 			console.log("Customer.registerLogin():"+error);
 			var customerResponseData = {error : error.toString()};
 			return customerResponseData;
 		}			
-	}	
+	}
+	/**
+	 * Create User 
+	 */
+	async createUser(context,args){
+		var customerModel = new CustomerModel();
+		var createdUserData = {};
+		try {
+			return new Token().getGuestToken().then(tokenData => this.createProfile(tokenData,context,args));
+		}catch (error) {
+			console.log("Customer.createUser():"+error);
+			createdUserData.error = error.toString();
+		}
+		return createdUserData;
+	}
+	/**
+	 * Create Profile 
+	*/
+	async createProfile(authToken,context,args){
+		try{
+			var customerModel = new CustomerModel();
+			if(authToken && authToken.token){
+				var authHeaders = {
+					"Content-Type":"application/json",
+					"Authorization": authToken.token
+				}
+				var bodyData =  JSON.stringify(args.input);
+				const url = Config.SFCC_ENV_URL+Config.SFCC_CUSTOMER_API_PATh;
+				const customerData = await fetch(url,{method:'post',headers:authHeaders,body:bodyData});
+				if(customerData){
+					var customerDataJSON =  await customerData.json();
+					var createdUserData = customerModel.getCustomerAssoicatedData(customerDataJSON);
+					if(createdUserData && createdUserData.success){
+						args.email = args.input.customer.login;
+						args.password = args.input.password;
+						createdUserData = this.registerLogin(context,args);
+					} 
+				}else{
+					createdUserData.error="Created User Failed at Service Call";
+				}
+			}else{
+				createdUserData.error="For Creating user Needed Auth Token , could not create it";
+			}
+		}catch(error){
+			console.log("Customer.createProfile():"+error);
+		}
+		return createdUserData;
+	}
+	
 }
-
-  
 export default Customer;

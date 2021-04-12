@@ -16,7 +16,13 @@ type AuthToken{
 	scope:String,
 	token_type: String,
 	expires_in : Int,
-	error : String
+	error : TokenError
+}
+
+type TokenError{
+	errorMSG: String,
+	errorCode : String,
+	errorDescription : String
 }
 
 `

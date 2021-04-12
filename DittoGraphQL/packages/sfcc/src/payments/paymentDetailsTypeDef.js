@@ -4,6 +4,7 @@
 const typeDefinition = `
 	 type Query  {
 		payment: Payment
+		
 	}
 	type Mutation {
 		createPaymentInstrument(input:PaymentCard!):PaymentData!

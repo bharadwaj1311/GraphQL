@@ -1,6 +1,6 @@
 
 
-import Token from '../../packages/token/Token.js';  
+import Token from './Token.js';  
 
 const  resolverObject = {
 	Query : {
