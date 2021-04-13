@@ -4,12 +4,13 @@ import Customer from './Customer.js';
 
 const  resolverObject = {
 	Query : {
-		customer: () => 	new Customer().getCustomer()
-		
+		customer: () => 	new Customer().getCustomer(),
+		loginUser: (data,args,context,info) =>  new Customer().registerLogin(context,args),
+		logout: (data, args, context) => {context.logout(); return "LogOutSuccess"}
 	},
 	Mutation:{
-		loginUser: (data,args,context,info) =>  new Customer().registerLogin(context,args),
-		logout: (data, args, context) => context.logout(),
+		 
+		
 		createCustomer : (data, args, context) => new Customer().createUser(context,args)
 	}
 }

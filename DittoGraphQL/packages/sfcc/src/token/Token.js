@@ -74,7 +74,6 @@ class Token{
 			 
 			const customerTokenResp = await fetch(url,{method:'post',headers:authHeaders,body:JSON.stringify(bodyData)});
 			var customerDetails = await customerTokenResp.json();
-			console.log("in token resp "+JSON.stringify(authHeaders));
 			tokenResponseData = tokenModel.getTokenAssoicatedData(customerDetails);
 			if(tokenResponseData.success){
 				tokenResponseData.token = customerTokenResp.headers.get('Authorization');
@@ -193,8 +192,6 @@ class Token{
 				"Content-Type":"application/x-www-form-urlencoded",
 				"Authorization":"Basic "+args.encodeStr
 			} 
-			console.log(" url is "+url);
-			
 			const authToken = await fetch(url,{method:'post',headers:authHeaders});
 			var tokenJSON = await authToken.json();
 			tokenResponseData = tokenModel.getTokenAssoicatedData(tokenJSON); 

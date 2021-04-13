@@ -5,26 +5,42 @@ const config = require('../../config/Config.js');
 const SFCCAPIPath = require('../../config/SFCCAPIPath');
 
 import {
-    getUserFromContext
+    getUserFromContext,getSFCCErrorMSG
 } from '../../../../index.js';
 
+
+/**
+ * Customer Class has below API's 
+ *
+ *	fetchCustomer
+ *	registerLogin
+ *	createUser
+ */
 
 class Customer{
 	constructor(){
 	}
 	
-	async getCustomer(){
+	async fetchCustomer(context,args){
 		var authHeaders = {
 			"Content-Type":"application/json",
-			"Authorization": "Bearer eyJfdiI6IjEiLCJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfdiI6IjEiLCJleHAiOjE2MTc2ODY2NDAsImlhdCI6MTYxNzY4NDg0MCwiaXNzIjoiNTJlYzc3MzAtYTEyMy00MDgxLTkwOTItYzMyNjk0MWNlNDRkIiwic3ViIjoie1wiX3ZcIjpcIjFcIixcImN1c3RvbWVyX2luZm9cIjp7XCJjdXN0b21lcl9pZFwiOlwiYmNkYkc3c2xDOW10aEtVakh4YTE4MEdPT0VcIixcImd1ZXN0XCI6ZmFsc2UsXCJ2aXNpdF9pZFwiOlwiMjM5NzA3MDg1MTRmYzQ0YTYzMWJkMGRiMGVcIn19In0.dl8XgldAVo8SGRDrrSAdnbD_tnRnfYwIrohjhsPW78JgTif2kukQqnB74RgKHRx6U5CTBee8ktTVwqnmtguRTwytmcrbk-tEEoJSUmlbu4WWp0WYdqxZc2XRsqbExzYASvBlEMxS0Y0axaGC4w70XJiz6gy37fIoF22p8GxeoCK4pCnPG9dbUo1EZO6eYtGK03NyskZdXN388FOOoxNgQoERrCsDll6jB5BWdV9bmP96Y2NpG_mOX_gOmYm_m7hJzKuY4zU90SGc-GYkbBKfRPK3GthTr0LNXVsknydirpsZDI1hlBjrCxNz689-ogulL1Pj3Zve88_OvaDSUp6H46kqlE9oH_Qp05W8b0eKqy5bK8KB8rhwE2aEdr54P4j93AKxCA1ThkkSq_6OsXroLf7dIstCSj8bbe-POGM6bXMl8zFpsh_Xt0v96PV6z6cnReNDyvxFXs8S4f8RzSrWXI7o_03Fd88F5Xgz5QTjBmx5kUVmAunO0h-ww-BHJWcfychO-z_fDj58guEpJ79C3BT2ISWBpwOAhALh0NigB0jPLw_l37GhH9s4hF6R1ubu"
+			"Authorization": args.token
 		}
 		try {
-			const url = config.SFCC_ENV_URL+SFCCAPIPath.SFCC_CUSTOMER_FETCH_API_PATh+"bcdbG7slC9mthKUjHxa180GOOE";
-			const customerData = await fetch(url,{method:'get',headers:authHeaders});
-			return await customerData.json();;
+			const url = config.SFCC_ENV_URL+SFCCAPIPath.SFCC_CUSTOMER_FETCH_API_PATh+args.customerID;
+			const customerDataResp = await fetch(url,{method:'get',headers:authHeaders});
+			var customerData =  await customerDataResp.json();
+			var customerModel = new CustomerModel();
+			var customerResponseData = customerModel.getCustomerAssoicatedData(customerData);
 		}catch (error) {
 			console.log("Customer.getCustomer()"+error);
+			var customerResponseData = {};
+			customerResponseData.error = {};
+			customerResponseData.error.errorCode = "Customer.203";
+			customerResponseData.error.errorMSG = getSFCCErrorMSG("Customer.203");
+			customerResponseData.error.errorDescription = error.toString();
 		}
+		return customerResponseData;
 	}
 	/**
 	 * Registered user / login flow
@@ -37,13 +53,23 @@ class Customer{
 			}
 			
 			return userContext().then(async context => { 
+				 
 				var customerResponseData = customerModel.getCustomerAssoicatedData(context.getUser());
-				console.log("in context return "+JSON.stringify(customerResponseData));
+				
+				if(customerResponseData.success){
+					args.token = customerResponseData.token;
+					args.customerID = customerResponseData.customer_id;
+					customerResponseData = this.fetchCustomer(context,args);
+				}
 				return customerResponseData;
 			});	
 		}catch(error){
 			console.log("Customer.registerLogin():"+error);
-			var customerResponseData = {error : error.toString()};
+			var customerResponseData = {};
+			customerResponseData.error={};
+			customerResponseData.error.errorMSG = getSFCCErrorMSG("Customer.202");
+			customerResponseData.error.errorCode = "Customer.202";
+			customerResponseData.error.errorDescription = error.toString();
 			return customerResponseData;
 		}			
 	}
@@ -66,7 +92,7 @@ class Customer{
 	*/
 	async createProfile(authToken,context,args){
 		var createdUserData = {};
-		createdUserData.error={};
+		
 		try{
 			var customerModel = new CustomerModel();
 			if(authToken && authToken.token){
@@ -76,30 +102,31 @@ class Customer{
 				}
 				var bodyData =  JSON.stringify(args.input);
 				const url = config.SFCC_ENV_URL+SFCCAPIPath.SFCC_CUSTOMER_API_PATh;
-				 
 				const customerData = await fetch(url,{method:'post',headers:authHeaders,body:bodyData});
 				if(customerData){
 					var customerDataJSON =  await customerData.json();
 					createdUserData = customerModel.getCustomerAssoicatedData(customerDataJSON);
-				 
 					if(createdUserData && createdUserData.success){
 						args.email = args.input.customer.login;
 						args.password = args.input.password;
 						createdUserData = this.registerLogin(context,args);
-						
 					} 
 				}else{
-					createdUserData.error.errorMSG="Created User Failed at Service Call";
+					createdUserData.error={};
+					createdUserData.error.errorMSG="Create User Failed : ";
 				}
 			}else{
-				createdUserData.error.errorMSG="For Creating user Needed Auth Token , could not create it";
+				createdUserData.error={};
+				createdUserData.error.errorDescription="For Creating user Needed Auth Token , could not create it";
+				createdUserData.error.errorCode= "customer.203";
+				createdUserData.error.errorMSG= getSFCCErrorMSG("Customer.203");
 			}
 		}catch(error){
 			console.log("Customer.createProfile():"+error);
+			createdUserData.error={};
 			createdUserData.error.errorMSG = error.toString();
 		}
 		return createdUserData;
-	}
-	
+	}	
 }
 export default Customer;

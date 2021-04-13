@@ -17,12 +17,13 @@ class TokenModel{
 	 */
 	getTokenAssoicatedData(respsonseObjJSON){
 		var tokenResponse= {};
-		tokenResponse.error = {};
+		
 		try{
 			// it means it is error response:
 			if(respsonseObjJSON){
 				//if it is fault
 				if(respsonseObjJSON.fault){
+					tokenResponse.error = {};
 					tokenResponse.error.errorDescription = respsonseObjJSON.fault.message?respsonseObjJSON.fault.message:"Token Error:Generic Error";
 					tokenResponse.error.errorCode = "Token.108";
 					tokenResponse.error.errorMSG = getSFCCErrorMSG("Token.108");
@@ -35,6 +36,7 @@ class TokenModel{
 					}else  if(respsonseObjJSON.error_description){
 						errorMessage = respsonseObjJSON.error_description.toString();
 					}
+					tokenResponse.error = {};
 					tokenResponse.error.errorCode = "Token.109";
 					tokenResponse.error.errorMSG = getSFCCErrorMSG("Token.109");
 					tokenResponse.error.errorDescription = errorMessage;

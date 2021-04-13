@@ -22,12 +22,13 @@ class CustomerModel{
 				}
 				if(respsonseObjJSON.error){
 					customerResponse.error={};
-					customerResponse.error.errorMSG = respsonseObjJSON.error.toString();
+					customerResponse.error.errorMSG = JSON.stringify(respsonseObjJSON.error.errorMSG?respsonseObjJSON.error.errorMSG:respsonseObjJSON.error);
+					customerResponse.error.errorCode = JSON.stringify(respsonseObjJSON.error.errorCode?respsonseObjJSON.error.errorCode:respsonseObjJSON.error);
 					return customerResponse;
 				}
 				if(respsonseObjJSON.error_description){
 					customerResponse.error={};
-					customerResponse.error.errorMSG = respsonseObjJSON.error_description.toString();
+					customerResponse.error.errorMSG = JSON.stringify(respsonseObjJSON.error_description).toString();
 					return customerResponse; 
 				}
 				customerResponse.customer_id = respsonseObjJSON.customer_id?respsonseObjJSON.customer_id:"";
@@ -49,6 +50,10 @@ class CustomerModel{
 					customerResponse.previous_login_time= respsonseObjJSON.previous_login_time;
 					customerResponse.previous_visit_time = respsonseObjJSON.previous_visit_time;
 					customerResponse.success=true;
+				}
+				//Either Guest or logged in user we will have Token..
+				if(respsonseObjJSON.token){
+					customerResponse.token = respsonseObjJSON.token;
 				}
 			}else{
 				customerResponse.error={};

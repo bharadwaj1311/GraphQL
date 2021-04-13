@@ -1,11 +1,12 @@
 const typeDefinition = `
 	extend type Query  {
 		customer: Customer
-	
+		loginUser(email:String!,password:String!):Customer,
+		logout: String
 	}
 	extend type Mutation{
-		loginUser(email:String!,password:String!):Customer,
-		logout: Boolean,
+		
+		
 		createCustomer(input:CustomerData!):Customer
 	}
 	type Customer {

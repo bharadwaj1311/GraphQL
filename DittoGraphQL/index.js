@@ -27,7 +27,7 @@ const config = require('./packages/sfcc/config/Config.js');
 
 const PORT = config.PORT;
 const SESSION_SECRECT = 'bad secret';
-
+var logger = require('logger').createLogger('AppLogger.log');
 
 passport.use(new GraphQLLocalStrategy((userID,password, done) => {
 		let AuthUser = function() {
@@ -62,7 +62,7 @@ const app = express();
 	sameSite: 'strict',
 	},
 }));
-
+ 
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -88,6 +88,9 @@ export function getSFCCErrorMSG(propKey){
 	}catch(error){
 		console.log("indexjs:.getPropertyValue() method error "+error.toString())
 	}		
+}
+export function getLogger(){
+	return logger;
 }
 const server = new ApolloServer({
   typeDefs,

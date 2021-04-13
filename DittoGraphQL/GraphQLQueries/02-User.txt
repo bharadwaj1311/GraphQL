@@ -5,12 +5,38 @@ mutation{
     password : "Bharat@123",
     customer :
    {
-                login: "Gayatri7",
-                email:"gayatri@test27.com",
+                login: "Gayatri8888888@test27.com",
+                email:"Gayatri8888888@test27.com",
                 last_name:"challa"
                }
   }){
-    customer_no 
+    customer_no ,
+    customer_id
+	error{
+		errorMSG,
+		errorDescription,
+		errorCode
+	}
   }
-  
 }
+
+
+###############Login ############3
+{ 
+  loginUser(email:"<<email ID>>",password:"<<password>>"){
+    customer_no ,
+    customer_id,
+    first_name,
+    last_name,
+    login,
+    email,
+    phone_mobile
+	error{
+		errorMSG,
+		errorDescription,
+		errorCode
+	}
+  }
+} 
+
+##### Fetch Customer #####
