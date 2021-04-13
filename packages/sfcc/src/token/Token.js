@@ -2,7 +2,7 @@ const fetch = require("make-fetch-happen");
 var SFCCAPIPath = require('../../config/SFCCAPIPath');
 
 import TokenModel from './TokenModel.js';
-import AppLogger from '../AppLogger.js';
+ 
 const config = require('../../config/Config.js'); 
 
 import {
@@ -28,7 +28,7 @@ class Token{
 	 * To get Guest Token...
 	*/
 	async getGuestToken(){
-		AppLogger.info("Token.getGuestToken(): in method"); 
+		 
 		var tokenModel = new TokenModel();
 		var tokenResponseData = {};
 		try {
