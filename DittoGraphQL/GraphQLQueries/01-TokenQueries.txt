@@ -15,13 +15,16 @@
 ####  Registered User Token #########
 create   a profile first in site then try below one.
 {
-  registeredUser(encodeStr:"<<Encode Base 64 userid:password >>"){
+  registeredUser(encodeStr:"<<storefront loginid:password with base 64 encode>>"){
     customer_id,
     token,
     auth_type,
-	error
+	error{
+		errorMSG,
+		errorCode,
+		errorDescription
+	}
   }
-}
 ##### Refresh Token ###
 ##Current Token  to refresh token
 {
@@ -29,7 +32,11 @@ create   a profile first in site then try below one.
     customer_id,
     token,
     auth_type
-    error
+    error{
+		errorMSG,
+		errorCode,
+		errorDescription
+	}
   }
 }
 
@@ -44,14 +51,27 @@ create   a profile first in site then try below one.
 
 {
   oAuthToken(encodeStr:"<<encoded APIkey:password>>") {
-    access_token
+	token,
+    token_type,
+    expires_in
+	error{
+		errorMSG,
+		errorCode,
+		errorDescription
+	}
   }
 }
 
 ####environment specific queries#########3
 {
   envAuthToken(encodeStr:"<<encode BM login ID : BM password : API Key password>>") {
-    access_token,
-    error_description
+   token,
+    token_type,
+    expires_in
+	error{
+		errorMSG,
+		errorCode,
+		errorDescription
+	}
   }
 }

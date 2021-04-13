@@ -5,6 +5,10 @@
  *	for oAuth Token  & environment wise oAuth Token.
  *	we are using to prepare output model..	
  */
+import {
+    getSFCCErrorMSG
+} from '../../../../index.js';
+
 class TokenModel{
 	constructor(){
 	}
@@ -13,12 +17,15 @@ class TokenModel{
 	 */
 	getTokenAssoicatedData(respsonseObjJSON){
 		var tokenResponse= {};
+		tokenResponse.error = {};
 		try{
 			// it means it is error response:
 			if(respsonseObjJSON){
 				//if it is fault
 				if(respsonseObjJSON.fault){
-					tokenResponse.error = respsonseObjJSON.fault.message?respsonseObjJSON.fault.message:"Token Error:Generic Error";
+					tokenResponse.error.errorDescription = respsonseObjJSON.fault.message?respsonseObjJSON.fault.message:"Token Error:Generic Error";
+					tokenResponse.error.errorCode = "Token.108";
+					tokenResponse.error.errorMSG = getSFCCErrorMSG("Token.108");
 					return tokenResponse;
 				}
 				if(respsonseObjJSON.error || respsonseObjJSON.error_description){
@@ -28,7 +35,9 @@ class TokenModel{
 					}else  if(respsonseObjJSON.error_description){
 						errorMessage = respsonseObjJSON.error_description.toString();
 					}
-					tokenResponse.error = errorMessage;
+					tokenResponse.error.errorCode = "Token.109";
+					tokenResponse.error.errorMSG = getSFCCErrorMSG("Token.109");
+					tokenResponse.error.errorDescription = errorMessage;
 					return tokenResponse;
 				}
 				//Update These Fields for guest/Logged in / refresh tokens....
@@ -48,13 +57,16 @@ class TokenModel{
 					tokenResponse.expires_in = respsonseObjJSON.expires_in;
 				}
 			}else{
-				tokenResponse.error = "Token Call Response Object is Null";
+				tokenResponse.error.errorDescription = "Token Call Response Object is Null";
 			}
 			tokenResponse.success=true;
 		}catch(error){
 			console.error("TokenModel.getTokenAssoicatedData():"+error);
 		 	tokenResponse.success=false;
-			tokenResponse.error = error.toString();
+			tokenResponse.error = {};
+			tokenResponse.error.errorMSG = getSFCCErrorMSG("Token.107");
+			tokenResponse.error.errorCode = "Token.107";
+			tokenResponse.error.errorDescription = "Token.getTokenAssoicatedData: Error is "+error.toString();
 		}
 		return tokenResponse;
 	}		
