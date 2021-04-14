@@ -26,6 +26,7 @@ var resolvers = [paymentDetailsResolver,customerDetailsResolver,tokenDetailsReso
 const config = require('./packages/sfcc/config/Config.js'); 
 
 const PORT = config.PORT;
+const HOST = config.HOST;
 const SESSION_SECRECT = 'bad secret';
  
 
@@ -102,5 +103,5 @@ const server = new ApolloServer({
 server.applyMiddleware({ app,path: '/api' });
 
 app.listen({ port: PORT }, () => {
-  console.log(`🚀 Server ready at http://localhost:${PORT}`);
+  console.log(`🚀 Server ready at {HOST}:${PORT}`);
 });
