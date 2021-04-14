@@ -97,11 +97,13 @@ export function getLogger(){
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: ({ req, res }) => buildContext({ req, res, User }) 
+  context: ({ req, res }) => buildContext({ req, res, User }) ,
+  introspection: true,
+  playground: true
 });
 
 server.applyMiddleware({ app,path: '/api' });
 
 app.listen({ port: PORT }, () => {
-  console.log(`🚀 Server ready at {HOST}:${PORT}`);
+  console.log(`🚀 Server ready at ${HOST}:${PORT}`);
 });
