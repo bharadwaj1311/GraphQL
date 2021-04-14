@@ -27,7 +27,7 @@ const config = require('./packages/sfcc/config/Config.js');
 
 const PORT = config.PORT;
 const SESSION_SECRECT = 'bad secret';
-var logger = require('logger').createLogger('AppLogger.log');
+ 
 
 passport.use(new GraphQLLocalStrategy((userID,password, done) => {
 		let AuthUser = function() {
@@ -90,8 +90,9 @@ export function getSFCCErrorMSG(propKey){
 	}		
 }
 export function getLogger(){
-	return logger;
-}
+	//return logger;
+	return "";
+} 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
