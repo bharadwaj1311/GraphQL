@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "description": "GraphQL Learning Query Mutation Resolvers Authentication ",
   "dependencies": {
-    "babel-cli": "^7.0.0-beta.3",
     "@babel/preset-env": "^7.0.0",
     "@babel/node": "^7.6.3",
     "apollo-server-express": "^2.9.6",
