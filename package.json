@@ -24,7 +24,7 @@
   "scripts": {
     "start": "npm run Development",
     "SB": "SET NODE_ENV=SB&& nodemon --watch ./packages --exec \"babel-node --inspect --presets=@babel/env   ./index.js\"",
-    "Development": "set NODE_ENV=Development&& nodemon --watch ./packages --exec babel-node    ./index.js",
+    "Development": "set NODE_ENV=Development&& nodemon --watch ./packages --exec babel-node --presets=@babel/preset-env   ./index.js",
     "Stage": "SET NODE_ENV=Stage&& nodemon --watch ./packages --exec \"babel-node --inspect --presets=@babel/env  ./index.js\"",
     "Production": "SET NODE_ENV=Production&&  nodemon --watch ./packages --exec \"babel-node --inspect --presets=@babel/env  index.js  \"  "
   },
